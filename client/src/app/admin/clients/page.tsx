@@ -1,0 +1,216 @@
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Clients } from "@/data/tenant-data";
+import { Plus, SlidersHorizontal, Edit2, Trash2 } from "lucide-react";
+import React from "react";
+import Link from "next/link";
+
+const ClientPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; status?: string }>;
+}) => {
+  const params = await searchParams;
+  const currentPage = Number(params?.page) || 1;
+  const currentStatus = params?.status || "all";
+  const itemsPerPage = 8;
+  
+  const filteredClients =
+    currentStatus === "all"
+      ? Clients
+      : Clients.filter((client) => client.status.toLowerCase() === currentStatus.toLowerCase());
+
+  const totalPages = Math.ceil(filteredClients.length / itemsPerPage) || 1;
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentClients = filteredClients.slice(startIndex, endIndex);
+
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-2 ">
+          <p className="font-bold text-primary tracking-wide text-[12px]">
+            MANAGEMENT HUB
+          </p>
+          <h1 className="text-4xl font-bold">Clients</h1>
+        </div>
+        <Button className="cursor-pointer px-6 py-5">
+          <Plus />
+          <span className="font-bold">Add Client</span>
+        </Button>
+      </div>
+      <Card className="my-4 px-6 py-4 border-none shadow-none rounded-0">
+        <div className="flex justify-between items-center">
+          <div className="flex bg-transparent gap-2">
+            {["all", "active", "suspended", "trial"].map((status) => (
+              <Link
+                key={status}
+                href={`?status=${status}&page=1`}
+                className={`text-muted-foreground font-semibold px-5 py-3 rounded-full transition-all duration-300 cursor-pointer capitalize ${
+                  currentStatus === status
+                    ? "bg-indigo-50 text-primary"
+                    : "hover:bg-gray-50 text-muted-foreground"
+                }`}
+              >
+                {status}
+              </Link>
+            ))}
+          </div>
+          <div className="flex gap-2 items-center">
+            <span>
+              Showing {currentClients.length} of {filteredClients.length} Tenants
+            </span>
+            <SlidersHorizontal size={20} strokeWidth={1.5} />
+          </div>
+        </div>
+        {/* table */}
+        <div className="mt-4 border-t border-gray-100">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b-0 hover:bg-transparent">
+                <TableHead className="w-75 text-xs font-bold text-[#7a879e] uppercase tracking-wider py-4">
+                  Tenant Name
+                </TableHead>
+                <TableHead className="text-xs font-bold text-[#7a879e] uppercase tracking-wider py-4 px-4">
+                  Domain
+                </TableHead>
+                <TableHead className="text-xs font-bold text-[#7a879e] uppercase tracking-wider py-4 px-4">
+                  Status
+                </TableHead>
+                <TableHead className="text-xs font-bold text-[#7a879e] uppercase tracking-wider py-4 px-4">
+                  Created At
+                </TableHead>
+                <TableHead className="text-xs font-bold text-[#7a879e] uppercase tracking-wider py-4 px-4 text-right pr-8">
+                  Actions
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {currentClients.map((tenant) => (
+                <TableRow
+                  key={tenant.id}
+                  className="border-b border-gray-100/80 hover:bg-gray-50/50"
+                >
+                  <TableCell className="py-3 border-l-2 border-transparent">
+                    <div className="flex items-center gap-4">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-bold text-[15px] text-gray-900">
+                          {tenant.tenant_name}
+                        </span>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-[#4b5563] text-[15px] font-medium">
+                    {tenant.domain}
+                  </TableCell>
+                  <TableCell className="py-3 px-4">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-2.5 h-2.5 rounded-full ${tenant.status === "active" ? "bg-[#00d084]" : tenant.status === "trial" ? "bg-[#3b82f6]" : "bg-[#ced4da]"}`}
+                      ></div>
+                      <span
+                        className={`text-[14px] font-bold capitalize ${tenant.status === "active" ? "text-[#00d084]" : tenant.status === "trial" ? "text-[#3b82f6]" : "text-[#868e96]"}`}
+                      >
+                        {tenant.status}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-[#4b5563] text-[14px] font-medium whitespace-pre-line leading-relaxed">
+                    {tenant.created_at}
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-right pr-8">
+                    <div className="flex items-center justify-end gap-1 text-gray-400">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-8 h-8 cursor-pointer rounded-md hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                      >
+                        <Edit2 size={16} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-8 h-8 cursor-pointer rounded-md hover:text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* pagination */}
+        <div className="flex items-center justify-between mt-2 p-2">
+          <div className="text-[14px] font-semibold text-[#4b5563]">
+            Page {currentPage} of {totalPages}
+          </div>
+          <div className="flex items-center gap-2.5">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href={currentPage > 1 ? `?status=${currentStatus}&page=${currentPage - 1}` : "#"}
+                    className={
+                      currentPage <= 1 ? "pointer-events-none opacity-50" : ""
+                    }
+                  />
+                </PaginationItem>
+
+                {Array.from({ length: totalPages }).map((_, i) => {
+                  const pageNumber = i + 1;
+                  return (
+                    <PaginationItem key={pageNumber}>
+                      <PaginationLink
+                        href={`?status=${currentStatus}&page=${pageNumber}`}
+                        isActive={currentPage === pageNumber}
+                      >
+                        {pageNumber}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href={
+                      currentPage < totalPages
+                        ? `?status=${currentStatus}&page=${currentPage + 1}`
+                        : "#"
+                    }
+                    className={
+                      currentPage >= totalPages
+                        ? "pointer-events-none opacity-50"
+                        : ""
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+export default ClientPage;
