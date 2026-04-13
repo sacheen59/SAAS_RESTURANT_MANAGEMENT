@@ -1,3 +1,5 @@
+"use client";
+import { use } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -18,23 +20,27 @@ import {
 } from "@/components/ui/table";
 import { Clients } from "@/data/tenant-data";
 import { Plus, SlidersHorizontal, Edit2, Trash2 } from "lucide-react";
-import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-const ClientPage = async ({
+const ClientPage = ({
   searchParams,
 }: {
   searchParams: Promise<{ page?: string; status?: string }>;
 }) => {
-  const params = await searchParams;
+  const router = useRouter();
+  const params = use(searchParams);
   const currentPage = Number(params?.page) || 1;
   const currentStatus = params?.status || "all";
   const itemsPerPage = 8;
-  
+
   const filteredClients =
     currentStatus === "all"
       ? Clients
-      : Clients.filter((client) => client.status.toLowerCase() === currentStatus.toLowerCase());
+      : Clients.filter(
+          (client) =>
+            client.status.toLowerCase() === currentStatus.toLowerCase(),
+        );
 
   const totalPages = Math.ceil(filteredClients.length / itemsPerPage) || 1;
 
@@ -43,7 +49,7 @@ const ClientPage = async ({
   const currentClients = filteredClients.slice(startIndex, endIndex);
 
   return (
-    <div className="p-6">
+    <div>
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-2 ">
           <p className="font-bold text-primary tracking-wide text-[12px]">
@@ -51,7 +57,10 @@ const ClientPage = async ({
           </p>
           <h1 className="text-4xl font-bold">Clients</h1>
         </div>
-        <Button className="cursor-pointer px-6 py-5">
+        <Button
+          onClick={() => router.push("/admin/clients/add-client")}
+          className="cursor-pointer px-6 py-5"
+        >
           <Plus />
           <span className="font-bold">Add Client</span>
         </Button>
@@ -75,7 +84,8 @@ const ClientPage = async ({
           </div>
           <div className="flex gap-2 items-center">
             <span>
-              Showing {currentClients.length} of {filteredClients.length} Tenants
+              Showing {currentClients.length} of {filteredClients.length}{" "}
+              Clients
             </span>
             <SlidersHorizontal size={20} strokeWidth={1.5} />
           </div>
@@ -169,7 +179,11 @@ const ClientPage = async ({
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    href={currentPage > 1 ? `?status=${currentStatus}&page=${currentPage - 1}` : "#"}
+                    href={
+                      currentPage > 1
+                        ? `?status=${currentStatus}&page=${currentPage - 1}`
+                        : "#"
+                    }
                     className={
                       currentPage <= 1 ? "pointer-events-none opacity-50" : ""
                     }

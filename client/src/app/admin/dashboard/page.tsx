@@ -3,23 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getToken } from "@/lib/auth";
-import dineOSLogo from "../../../../public/logo/dineicon.png";
-import {
-  BarChart3,
-  Bell,
-  BellIcon,
-  Building2,
-  CreditCard,
-  HelpCircle,
-  House,
-  LayoutDashboard,
-  ReceiptText,
-  Search,
-  Settings,
-  UserIcon,
-  Users,
-} from "lucide-react";
-import Image from "next/image";
+import { House, LayoutDashboard, Settings } from "lucide-react";
 
 // ----nav items
 const NAV = [

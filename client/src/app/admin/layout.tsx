@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { getToken } from "@/lib/auth";
-import dineOSLogo from "../../../public/logo/dineicon.png";
 import {
   BellIcon,
   HelpCircle,
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import dineOsLogo from "../../../public/dineos-logo.png";
 
 // ----nav items
 const NAV = [
@@ -48,8 +48,8 @@ export default function AdminLayout({
     const token = getToken();
     if (!token) {
       router.push("/login");
-    }else{
-      router.push("/admin/dashboard")
+    } else {
+      router.push("/admin/dashboard");
     }
   }, []);
 
@@ -60,7 +60,7 @@ export default function AdminLayout({
         {/* Logo */}
         <div className="px-5 py-5.5 border-b border-[#f0f0f8]">
           <div className="flex items-center gap-3">
-            <Image src={dineOSLogo} alt="dineOS logo" width={20} height={20} />
+            <Image src={dineOsLogo} alt="dineOS logo" width={50} height={50} />
             <div>
               <p className="text-[15px] font-extrabold text-[#1e1e2e] tracking-tight leading-none">
                 <span className="text-primary">Dine</span>
@@ -172,9 +172,7 @@ export default function AdminLayout({
         </header>
 
         {/* ── CONTENT ─────────────────────────────────────────────── */}
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
+        <main className="p-6 flex-1 overflow-y-auto">{children}</main>
       </div>
     </div>
   );
