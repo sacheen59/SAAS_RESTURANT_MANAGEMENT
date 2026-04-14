@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import dineOsLogo from "../../../public/dineos-logo.png";
+import dineOsLogo from "@/../public/dineos.svg";
 
 // ----nav items
 const NAV = [
@@ -25,7 +25,7 @@ const NAV = [
   },
   {
     id: "clients",
-    label: "Clents",
+    label: "Clients",
     icon: <House size={24} strokeWidth={1.5} />,
     href: "/admin/clients",
   },

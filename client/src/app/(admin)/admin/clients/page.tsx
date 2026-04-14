@@ -49,7 +49,7 @@ const ClientPage = ({
   const currentClients = filteredClients.slice(startIndex, endIndex);
 
   return (
-    <div>
+    <>
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-2 ">
           <p className="font-bold text-primary tracking-wide text-[12px]">
@@ -223,7 +223,7 @@ const ClientPage = ({
           </div>
         </div>
       </Card>
-    </div>
+    </>
   );
 };
 
