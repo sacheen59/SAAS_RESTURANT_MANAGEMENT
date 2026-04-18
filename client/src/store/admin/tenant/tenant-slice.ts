@@ -21,6 +21,14 @@ const tenantSlice = createSlice({
     name: 'tenant',
     initialState: initialTenantState,
     reducers:{
+        addTenant:(state, payload)=>{
 
+        },
+        deleteTenant: (state, payload)=> {
+
+        },
+        editTenant: (state,payload) => {
+            
+        }
     }
 });

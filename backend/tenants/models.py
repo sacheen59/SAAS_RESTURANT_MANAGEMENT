@@ -24,7 +24,7 @@ class TenantUser(AbstractBaseUser,TimestampedModel):
     )
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(blank=True)
-    full_name = models.CharField(max_length=255)
+    full_name = models.CharField(max_length=255, null=True, blank=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='customer')
     is_active = models.BooleanField(default=True)
 
