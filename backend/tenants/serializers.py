@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.hashers import check_password
 from django_tenants.utils import schema_context
 
 from clients.models import Tenant, Domain
@@ -113,5 +112,5 @@ class CreateTenantSerializer(serializers.Serializer):
         )
         tenant_user.set_password(administrative_data["password"])
         tenant_user.save()
-
         return tenant
+
