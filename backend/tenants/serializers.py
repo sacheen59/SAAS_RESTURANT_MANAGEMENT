@@ -69,15 +69,15 @@ class ListTenantSerializer(serializers.ModelSerializer):
             "domain": domain_data.domain
         }
 
-class CreateTenantSerializer(serializers.Serializer):
-    name = serializers.CharField()
-    status = serializers.CharField()
-    schema_name = serializers.CharField()
-    slug = serializers.CharField()
+class CreateTenantSerializer(serializers.ModelSerializer):
     domain = serializers.CharField(write_only=True)
     is_primary = serializers.BooleanField(default=True)
     username = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Tenant
+        fields = ['name','status','schema_name','slug']
 
     def validate(self, attrs):
         name = attrs.get('name')
