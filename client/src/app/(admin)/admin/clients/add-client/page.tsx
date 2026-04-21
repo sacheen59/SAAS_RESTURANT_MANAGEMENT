@@ -26,7 +26,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   generateDomain,
   generateSchemaName,
@@ -39,11 +39,16 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import type { InferType } from "yup";
 import { addTenantSchema } from "@/schema/admin/add-tenant";
 import { Button } from "@/components/ui/button";
+import { useDispatch } from "react-redux";
+import { createTenant } from "@/store/admin/tenant/actions/tenant-action";
+import { CreateTenantData } from "@/store/admin/tenant/tenant-slice";
+import { AppDispatch } from "@/store";
 
 type TenantData = InferType<typeof addTenantSchema>;
 
 const AddClientPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   const {
     register,
@@ -78,8 +83,9 @@ const AddClientPage = () => {
     }
   }, [clientName, setValue]);
 
-  const submitFormHandler = (data: TenantData) => {
+  const submitFormHandler = (data: CreateTenantData) => {
     console.log(data);
+    dispatch(createTenant(data));
     reset();
   };
 
@@ -225,7 +231,7 @@ const AddClientPage = () => {
                   id="primaryDomain"
                   size="lg"
                   className="cursor-pointer"
-                  defaultChecked 
+                  defaultChecked
                   onCheckedChange={(val) => setValue("isPrimary", val)}
                 />
                 <FieldLabel

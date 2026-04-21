@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { getToken } from "@/lib/auth";
+import { hasValidToken, logoutAndRedirect } from "@/lib/auth";
 import {
   BellIcon,
   HelpCircle,
@@ -45,13 +45,11 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      router.push("/login");
-    } else {
-      router.push("/admin/dashboard");
+    if (!hasValidToken()) {
+      logoutAndRedirect("/login");
+      return;
     }
-  }, []);
+  }, [router]);
 
   return (
     <div className="flex h-screen bg-[#f4f5fb] font-sans text-sm text-[#1e1e2e] overflow-hidden">

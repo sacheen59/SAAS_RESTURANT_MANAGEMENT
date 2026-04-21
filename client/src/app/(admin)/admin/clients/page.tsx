@@ -1,7 +1,8 @@
 "use client";
-import { use } from "react";
+import { use, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Pagination,
   PaginationContent,
@@ -18,10 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Clients } from "@/data/tenant-data";
 import { Plus, SlidersHorizontal, Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { fetchTenants } from "@/store/admin/tenant/actions/tenant-action";
+import { AppDispatch, RootState } from "@/store";
 
 const ClientPage = ({
   searchParams,
@@ -33,20 +35,16 @@ const ClientPage = ({
   const currentPage = Number(params?.page) || 1;
   const currentStatus = params?.status || "all";
   const itemsPerPage = 8;
+  const dispatch = useDispatch<AppDispatch>();
+  const { allTenantData, count, loading } = useSelector(
+    (state: RootState) => state.tenant,
+  );
 
-  const filteredClients =
-    currentStatus === "all"
-      ? Clients
-      : Clients.filter(
-          (client) =>
-            client.status.toLowerCase() === currentStatus.toLowerCase(),
-        );
+  const totalPages = Math.max(1, Math.ceil(count / itemsPerPage));
 
-  const totalPages = Math.ceil(filteredClients.length / itemsPerPage) || 1;
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentClients = filteredClients.slice(startIndex, endIndex);
+  useEffect(() => {
+    dispatch(fetchTenants({ page: currentPage, status: currentStatus }));
+  }, [dispatch, currentPage, currentStatus]);
 
   return (
     <>
@@ -84,7 +82,7 @@ const ClientPage = ({
           </div>
           <div className="flex gap-2 items-center">
             <span>
-              Showing {currentClients.length} of {filteredClients.length}{" "}
+              Showing {allTenantData.length} of {count}{" "}
               Clients
             </span>
             <SlidersHorizontal size={20} strokeWidth={1.5} />
@@ -113,7 +111,7 @@ const ClientPage = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {currentClients.map((tenant) => (
+              {allTenantData.map((tenant) => (
                 <TableRow
                   key={tenant.id}
                   className="border-b border-gray-100/80 hover:bg-gray-50/50"
@@ -122,7 +120,7 @@ const ClientPage = ({
                     <div className="flex items-center gap-4">
                       <div className="flex flex-col gap-0.5">
                         <span className="font-bold text-[15px] text-gray-900">
-                          {tenant.tenant_name}
+                          {tenant.name}
                         </span>
                       </div>
                     </div>
@@ -165,6 +163,13 @@ const ClientPage = ({
                   </TableCell>
                 </TableRow>
               ))}
+              {!loading && allTenantData.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
+                    No tenants found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>

@@ -35,13 +35,13 @@ class TenantLoginSerializer(serializers.Serializer):
 
             # build jwt with tenant + role info
             refresh = RefreshToken()
-            refresh['user_id']       = user.id
-            refresh['username']      = user.username
-            refresh['role']          = user.role
+            refresh['user_id'] = user.id
+            refresh['username'] = user.username
+            refresh['role'] = user.role
             refresh['tenant_schema'] = tenant.schema_name
-            refresh['tenant_slug']   = tenant.slug
-            refresh['tenant_name']   = tenant.name
-            refresh['token_type']    = 'tenant'
+            refresh['tenant_slug'] = tenant.slug
+            refresh['tenant_name'] = tenant.name
+            refresh['token_type'] = 'tenant'
 
 
         return {
@@ -63,9 +63,9 @@ class ListTenantSerializer(serializers.ModelSerializer):
         domain_data = instance.get_primary_domain()
         return {
             "id": instance.id,
-            "name": instance.name,
+            "name": instance.name.title(),
             "status": instance.status,
-            "created_at": instance.created_at,
+            "created_at": instance.created_at.strftime("%b %d, %Y"),
             "domain": domain_data.domain
         }
 
@@ -77,7 +77,7 @@ class CreateTenantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tenant
-        fields = ['name','status','schema_name','slug']
+        fields = ['name','status','schema_name','slug', 'domain', 'is_primary','username','password']
 
     def validate(self, attrs):
         name = attrs.get('name')
@@ -128,6 +128,7 @@ class CreateTenantSerializer(serializers.ModelSerializer):
                     tenant_user = TenantUser.objects.create(
                         username=administrative_data['username'],
                         role= 'admin',
+                        full_name=tenant_data.get('name')
                     )
                     tenant_user.set_password(administrative_data["password"])
                     tenant_user.save()
