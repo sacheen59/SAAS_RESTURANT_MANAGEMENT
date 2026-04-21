@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from utils.common_model import TimestampedModel
+from clients.models import Tenant
 
 class TenantUserManager(BaseUserManager):
     def create_user(self,username, password=None, **extra_fields):
@@ -38,7 +39,7 @@ class TenantUser(AbstractBaseUser,TimestampedModel):
         db_table = 'tenants_tenantuser'
 
     def __str__(self):
-        return self.name
+        return self.username
 
     @property
     def is_tenant_admin(self):

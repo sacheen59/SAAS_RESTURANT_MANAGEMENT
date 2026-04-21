@@ -3,7 +3,7 @@ from .models import Tenant, Domain
 
 @admin.register(Tenant)
 class TenantAdmin(admin.ModelAdmin):
-    list_display = ['name', 'schema_name', 'slug', 'is_active','status']
+    list_display = ['name', 'schema_name', 'slug', 'is_active','status','created_at','updated_at']
     prepopulated_fields = {
         "slug": ('schema_name',)
     }

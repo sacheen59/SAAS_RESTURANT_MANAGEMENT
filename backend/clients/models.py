@@ -5,7 +5,7 @@ from django_tenants.models import TenantMixin, DomainMixin
 from utils.common_model import TimestampedModel
 
 
-class Tenant(TenantMixin):
+class Tenant(TenantMixin,TimestampedModel):
     STATUS = (
         ('trial', 'Trial'),
         ('active', 'Active'),

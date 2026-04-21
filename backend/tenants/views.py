@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from tenants.serializers import TenantLoginSerializer
 from rest_framework.generics import ListCreateAPIView,CreateAPIView
 
-from tenants.serializers import CreateTenantSerializer
+from tenants.serializers import CreateTenantSerializer, ListTenantSerializer
 from clients.models import Tenant
 from tenants.permissions import IsSuperAdmin
 
@@ -20,7 +20,11 @@ class TenantLoginView(APIView):
 
 
 class ListCreateTenantView(ListCreateAPIView):
-    serializer_class = CreateTenantSerializer
     queryset = Tenant.objects.all()
     permission_classes = [IsSuperAdmin]
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return ListTenantSerializer
+        return CreateTenantSerializer
 

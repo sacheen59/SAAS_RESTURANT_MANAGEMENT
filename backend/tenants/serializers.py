@@ -1,3 +1,5 @@
+from django.db import transaction
+
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from django_tenants.utils import schema_context
@@ -51,30 +53,45 @@ class TenantLoginSerializer(serializers.Serializer):
             'tenant_slug': tenant.slug,
         }
 
+class ListTenantSerializer(serializers.ModelSerializer):
+    # domain = serializers.CharField(read_only=True)
+    class Meta:
+        model = Tenant
+        fields = ['id','name','status','created_at']
+
+    def to_representation(self, instance: Tenant):
+        domain_data = instance.get_primary_domain()
+        return {
+            "id": instance.id,
+            "name": instance.name,
+            "status": instance.status,
+            "created_at": instance.created_at,
+            "domain": domain_data.domain
+        }
 
 class CreateTenantSerializer(serializers.Serializer):
-    tenant_name = serializers.CharField()
-    tenant_status = serializers.CharField()
+    name = serializers.CharField()
+    status = serializers.CharField()
     schema_name = serializers.CharField()
     slug = serializers.CharField()
-    domain = serializers.CharField()
+    domain = serializers.CharField(write_only=True)
     is_primary = serializers.BooleanField(default=True)
-    username = serializers.CharField()
-    password = serializers.CharField()
+    username = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        tenant_name = attrs.get('tenant_name')
+        name = attrs.get('name')
         domain = attrs.get('domain')
 
-        if Tenant.objects.filter(name=tenant_name).exists():
+        if Tenant.objects.filter(name=name).exists():
             raise serializers.ValidationError("The Client name already exists.")
 
         if Domain.objects.filter(domain=domain).exists():
             raise serializers.ValidationError("This Domain alreay exists.")
         return {
             "tenant_data" : {
-                "tenant_name": tenant_name,
-                "tenant_status": attrs.get('tenant_status'),
+                "name": name,
+                "status": attrs.get('status'),
                 "schema_name": attrs.get('schema_name'),
                 "slug": attrs.get('slug')
             },
@@ -82,7 +99,7 @@ class CreateTenantSerializer(serializers.Serializer):
                 "domain" : domain,
                 "is_primary": attrs.get('is_primary')
             },
-            "adminstrative_data": {
+            "administrative_data": {
                 "username": attrs.get('username'),
                 'password': attrs.get('password')
             }
@@ -92,25 +109,29 @@ class CreateTenantSerializer(serializers.Serializer):
         tenant_data = validated_data.get('tenant_data')
         domain_data = validated_data.get('domain_data')
         administrative_data = validated_data.get('administrative_data')
-
-        tenant = Tenant.objects.create(
-            name=tenant_data['tenant_name'],
-            schema_name=tenant_data['schema_name'],
-            status=tenant_data['tenant_status'],
-            slug=tenant_data['slug'],
-        )
-        # create domain
-        Domain.objects.create(
-            domain = domain_data["domain"],
-            is_primary = domain_data['is_primary'],
-            tenant = tenant
-        )
-        # create the admin at the same time
-        tenant_user = TenantUser.objects.create(
-            username=administrative_data['username'],
-            role= 'admin'
-        )
-        tenant_user.set_password(administrative_data["password"])
-        tenant_user.save()
-        return tenant
+        try:
+            with transaction.atomic():
+                tenant = Tenant.objects.create(
+                    name=tenant_data['name'],
+                    schema_name=tenant_data['schema_name'],
+                    status=tenant_data['status'],
+                    slug=tenant_data['slug'],
+                )
+                # create domain
+                Domain.objects.create(
+                    domain = domain_data["domain"],
+                    is_primary = domain_data['is_primary'],
+                    tenant = tenant
+                )
+                # create the admin at the same time
+                with schema_context(tenant.schema_name):
+                    tenant_user = TenantUser.objects.create(
+                        username=administrative_data['username'],
+                        role= 'admin',
+                    )
+                    tenant_user.set_password(administrative_data["password"])
+                    tenant_user.save()
+                return tenant
+        except Exception as e:
+            raise serializers.ValidationError(f"Tenant Creation failed:{str(e)}")
 
