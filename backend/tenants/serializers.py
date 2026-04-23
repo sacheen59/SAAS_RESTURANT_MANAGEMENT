@@ -135,4 +135,3 @@ class CreateTenantSerializer(serializers.ModelSerializer):
                 return tenant
         except Exception as e:
             raise serializers.ValidationError(f"Tenant Creation failed:{str(e)}")
-

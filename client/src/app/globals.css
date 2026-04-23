@@ -5,7 +5,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
 body {
   font-family: var(--font-sans);
 }
@@ -44,6 +43,7 @@ body {
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-sidebar-menu-hover: var(--sidebar-menu-hover);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -62,7 +62,7 @@ body {
   --popover-foreground: oklch(0.145 0 0);
   --primary: #1d4e7b;
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+  --secondary: #bd6027;
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
@@ -86,6 +86,7 @@ body {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-menu-hover: #ba8869,
 }
 
 .dark {

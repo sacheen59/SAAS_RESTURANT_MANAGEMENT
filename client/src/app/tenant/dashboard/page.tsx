@@ -14,14 +14,9 @@ export default function TenantDashboard() {
       router.push("/login");
       return;
     }
+
     setName(localStorage.getItem("username") || "");
   }, []);
 
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50">
-      <h1 className="text-2xl font-semibold text-gray-900 capitalize">
-        {name} dashboard
-      </h1>
-    </main>
-  );
+  return <div>something {name}</div>;
 }
