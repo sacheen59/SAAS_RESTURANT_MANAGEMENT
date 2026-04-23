@@ -98,7 +98,7 @@ const AddClientPage = () => {
   }
 
   return (
-    <div>
+    <>
       <div className="flex flex-col gap-5">
         <Breadcrumb>
           <BreadcrumbList>
@@ -316,7 +316,7 @@ const AddClientPage = () => {
           </Button>
         </div>
       </form>
-    </div>
+    </>
   );
 };
 

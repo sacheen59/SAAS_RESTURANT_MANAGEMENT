@@ -23,7 +23,7 @@ export default function TenantAdminLogin({host, tenantName}: Props) {
         try{
             const data = await tenantLogin(host, username, password);
             saveSession(data)
-            router.push('/dashboard')
+            router.push('/tenant/dashboard')
         }catch(err: any){
             setError(err.message)
         }finally{
