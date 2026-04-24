@@ -57,7 +57,7 @@ function BreadcrumbLink({
       data-slot="breadcrumb-link"
       className={cn(
         "font-bold transition-colors hover:text-foreground",
-        isActive && "text-primary",
+        isActive && "text-secondary",
         className,
       )}
       {...props}

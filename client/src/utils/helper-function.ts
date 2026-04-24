@@ -25,3 +25,7 @@ export function generateTenantUsername(name: string) {
 export function generateTenantPassword(name: string) {
   return name.toLowerCase().trim().replace(" ", "") + "@123";
 }
+
+export function titleWord(text: string) {
+  return text[0].toUpperCase() + text.slice(1, text.length);
+}
