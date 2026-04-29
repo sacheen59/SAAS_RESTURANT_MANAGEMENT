@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -84,7 +84,9 @@ const NAV = [
 ];
 
 const TenantSidebar = () => {
-  const [active, setactive] = useState("dashboard");
+  const pathname = usePathname();
+  const active =
+    NAV.find((item) => pathname?.startsWith(item.href))?.id ?? "dashboard";
   return (
     <Sidebar className="shadow-none">
       <SidebarHeader className="h-15 px-5 py-2 border-b-2 border-[#f0f0f8]">
@@ -106,8 +108,6 @@ const TenantSidebar = () => {
                 <SidebarMenuButton
                   size={"lg"}
                   className={`cursor-pointer px-5 rounded-none hover:text-secondary hover:rounded-none hover:border-l-4 hover:border-secondary ${active === item.id ? "bg-[#f0ded2] border-l-4 border-secondary hover:bg-[#f0ded2] hover:text-black" : "border-l-4 border-transparent"}`}
-                  key={item.id}
-                  onClick={() => setactive(item.id)}
                 >
                   {item.icon}
                   <span className="text-md">{item.label}</span>

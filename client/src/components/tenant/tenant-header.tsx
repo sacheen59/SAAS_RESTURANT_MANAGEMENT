@@ -4,7 +4,7 @@ export default function TenantHeader() {
   return (
     <header className="h-15 bg-white border-b border-[#ebebf5] flex items-center gap-4 px-6 sticky top-0 z-50 shrink-0">
       {/* Search bar */}
-      <div className="flex items-center gap-2.5 flex-1 max-w-105 bg-[#f6f6fc] border border-[#ebebf5] rounded-[10px] px-3.5 h-9.5">
+      {/* <div className="flex items-center gap-2.5 flex-1 max-w-105 bg-[#f6f6fc] border border-[#ebebf5] rounded-[10px] px-3.5 h-9.5">
         <svg
           width="15"
           height="15"
@@ -22,7 +22,7 @@ export default function TenantHeader() {
           placeholder="Search Here...."
           className="flex-1 bg-transparent border-none outline-none text-[13px] text-[#1e1e2e] placeholder-[#b0b0cc] font-medium"
         />
-      </div>
+      </div> */}
 
       {/* Right side */}
       <div className="flex items-center gap-2 ml-auto">

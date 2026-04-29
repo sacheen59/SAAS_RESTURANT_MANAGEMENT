@@ -8,25 +8,28 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { EllipsisVertical, Plus, Users } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Plus } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import TableList from "@/components/tenant/table/table-list";
 import { TABLE_DATA } from "@/data/table-data";
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import AddNewTable from "@/components/tenant/table/new-table";
+import { useMemo, useState } from "react";
 
 const TablePage = () => {
+  const [activeStatus, setActiveStatus] = useState("all");
+
+  const filteredTables = useMemo(() => {
+    if (activeStatus === "all") {
+      return TABLE_DATA;
+    }
+
+    return TABLE_DATA.filter((table) => table.status === activeStatus);
+  }, [activeStatus]);
+
   return (
     <>
       <div>
@@ -54,7 +57,7 @@ const TablePage = () => {
       </div>
       <div className="flex items-center justify-between mt-4 mb-6">
         <div className="flex flex-col">
-          <h2 className="text-2xl font-bold leading-10 tracking-normal">
+          <h2 className="text-3xl font-bold leading-10 tracking-normal">
             Table Management
           </h2>
           <p className="text-sm leading-4 text-gray-500 tracking-wide">
@@ -64,6 +67,8 @@ const TablePage = () => {
         <div className="flex items-center gap-2">
           <Tabs
             defaultValue="all"
+            value={activeStatus}
+            onValueChange={setActiveStatus}
             className="w-90 bg-white border rounded-xl py-0.5"
           >
             <TabsList className=" px-2 py-4 gap-4 bg-white">
@@ -82,21 +87,10 @@ const TablePage = () => {
             <DialogTrigger asChild>
               <Button className="bg-secondary px-4 py-4.5 cursor-pointer">
                 <Plus />
-                <span>Add new Table</span>
+                <span>Add Table</span>
               </Button>
             </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle className="flex flex-col gap-1">
-                  <h3 className="scroll-m-20 text-2xl font-semibold tracking-normal">
-                    Add New Table
-                  </h3>
-                  <p className="text-[12px] font-normal text-gray-400">
-                    Enter details for the new table
-                  </p>
-                </DialogTitle>
-              </DialogHeader>
-            </DialogContent>
+            <AddNewTable />
           </Dialog>
         </div>
       </div>
@@ -134,7 +128,7 @@ const TablePage = () => {
         </Card>
       </div>
       {/* table details start */}
-      <TableList tableData={TABLE_DATA} />
+      <TableList tableData={filteredTables} />
     </>
   );
 };

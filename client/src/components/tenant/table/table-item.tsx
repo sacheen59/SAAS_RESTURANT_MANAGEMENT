@@ -5,6 +5,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Table } from "@/data/table-data";
 import { titleWord } from "@/utils/helper-function";
 import { Calendar, EllipsisVertical, Users } from "lucide-react";
