@@ -1,47 +1,90 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Clock } from "lucide-react";
+import { useState } from "react";
+import TableOrderItem from "./table-order-item";
+import { OrderData } from "@/data/kitchen-data";
 
-export default function BoardItem() {
+interface BoardItemProps {
+  buttonLabel: string;
+  buttonClass: string;
+  tableCardClass: string;
+  orderNumberClass: string;
+  statusChecker: React.ReactNode;
+  isReady: boolean;
+  orderNumber: number;
+  tableNumber: number;
+  orderItems: OrderData[];
+  orderId: number;
+  status: string;
+  updateOrderStatus: (orderId: number, newStatus: string) => void;
+}
+
+export default function BoardItem({
+  buttonLabel,
+  buttonClass,
+  tableCardClass,
+  orderNumberClass,
+  statusChecker,
+  isReady,
+  orderNumber,
+  tableNumber,
+  orderItems,
+  updateOrderStatus,
+  orderId,
+  status,
+}: BoardItemProps) {
+  const [checkedItems, setIsCheckedItems] = useState<Record<number, boolean>>(
+    {},
+  );
+
+  let newStatus = "";
+  if (status === "pending") {
+    newStatus = "preparing";
+  }
+  if (status == "preparing") {
+    newStatus = "ready";
+  }
+
+  function handleCheck(index: number, checked: boolean) {
+    setIsCheckedItems((prev) => ({
+      ...prev,
+      [index]: checked,
+    }));
+  }
   return (
-    <Card className="rounded-md mb-2 px-6">
+    <Card className={`rounded-md mb-2 px-6 ${tableCardClass}`}>
       <div className="flex items-center justify-between">
-        <div className="bg-[#f1ded3] px-2 py-0.5 rounded-md">
-          <span className="text-secondary font-bold">#{""}1024</span>
+        <div className={`${orderNumberClass} px-2 py-0.5 font-bold rounded-md`}>
+          <span className="">
+            #{""}
+            {orderNumber}
+          </span>
         </div>
-        <div className="flex flex-col">
-          <div className="flex items-center gap-1">
-            <Clock strokeWidth={1.5} size={14} />
-            <span className="text-xs">04:12</span>
-          </div>
-          <span className="text-[10px]">2 mins ago</span>
-        </div>
+        {statusChecker}
       </div>
-      <h2 className="text-xl font-bold">Table 12</h2>
-      <div className="flex flex-col gap-2">
-        <div className="flex items-start gap-2">
-          <Input type="checkbox" className="w-4 h-4 mt-1" />
-          <div className="flex flex-col">
-            <span className="text-sm font-bold">2x Fried MO:MO</span>
-            <span className="text-[10px] text-red-700 italic">
-              Medium Rare, No onion
-            </span>
-          </div>
-        </div>
-        <div className="flex items-start gap-2">
-          <Input type="checkbox" className="w-4 h-4 mt-1" />
-          <div className="flex flex-col">
-            <span className="text-sm font-bold">1x Truffle Fries</span>
-          </div>
-        </div>
+      <h2 className="text-xl font-bold -mt-2">Table {tableNumber}</h2>
+      <div className="flex gap-3">
+        {orderItems.map((item) => (
+          <TableOrderItem
+            key={item.id}
+            isChecked={checkedItems[item.id] || false}
+            handleCheck={(e) => handleCheck(item.id, e.target.checked)}
+            isReady={isReady}
+            itemName={item.itemName}
+            quantity={item.quantity}
+            excludeIngredients={item.excludedIngredients}
+          />
+        ))}
       </div>
 
       <Separator className="bg-[#f1ded3]" />
       <div className="grid">
-        <Button className="rounded-md py-5 cursor-pointer text-secondary font-bold bg-[#f1ded3] hover:bg-[#f5dacb] ">
-          Start Prep
+        <Button
+          onClick={() => updateOrderStatus(orderId, newStatus)}
+          className={`rounded-md py-5 cursor-pointer text-secondary font-bold ${buttonClass}`}
+        >
+          {buttonLabel}
         </Button>
       </div>
     </Card>

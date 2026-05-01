@@ -8,19 +8,24 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, EllipsisVertical, Plus } from "lucide-react";
+import { KITCHENDATA } from "@/data/kitchen-data";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 
 export default function KitchenPage() {
+  const [orders, setOrders] = useState(KITCHENDATA);
+
+  function updateOrderStatus(orderId: number, newStatus: string) {
+    setOrders((prev) => {
+      const updatedOrder = prev.find((o) => o.id === orderId);
+      if (!updatedOrder) return prev;
+      const remainingOrders = prev.filter((o) => o.id !== orderId);
+      return [...remainingOrders, { ...updatedOrder, status: newStatus }];
+    });
+  }
+
   return (
     <>
       <div>
@@ -82,10 +87,20 @@ export default function KitchenPage() {
           </Dialog>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-x-10">
-        {["pending", "preparing", "ready"].map((item, index) => (
-          <BoardList key={index} title={item} />
-        ))}
+      <div className="grid grid-cols-3 gap-x-10 h-[75vh]">
+        {["pending", "preparing", "ready"].map((status, index) => {
+          const filterOrders = orders.filter(
+            (order) => order.status === status,
+          );
+          return (
+            <BoardList
+              key={index}
+              title={status}
+              data={filterOrders}
+              updateOrderStatus={updateOrderStatus}
+            />
+          );
+        })}
       </div>
     </>
   );
